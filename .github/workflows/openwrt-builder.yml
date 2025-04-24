@@ -48,7 +48,7 @@ jobs:
           echo "End of build log"
 
       - name: Upload firmware image
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: OpenWrt-firmware
           path: openwrt/bin/targets/x86/64/
