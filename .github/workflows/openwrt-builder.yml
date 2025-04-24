@@ -7,7 +7,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up build environment
@@ -35,8 +35,17 @@ jobs:
           make download -j$(nproc) || true
           make -j$(nproc) || make -j1 V=s
 
-      - name: List output files
-        run: ls -lh openwrt/bin/targets/x86/64/ || echo "No firmware output found"
+      - name: List files after build
+        run: |
+          echo "Listing contents of the build folder:"
+          ls -lh openwrt/bin/targets/x86/64/
+          echo "End of folder contents"
+
+      - name: Check build logs for errors
+        run: |
+          echo "Checking build logs for errors:"
+          tail -n 50 openwrt/build_dir/target-x86_64_uClibc-*/logs/build.log
+          echo "End of build log"
 
       - name: Upload firmware image
         uses: actions/upload-artifact@v3
