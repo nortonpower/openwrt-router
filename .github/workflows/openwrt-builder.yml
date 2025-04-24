@@ -1,4 +1,4 @@
-name: Build OpenWrt
+name: Build OpenWrt Firmware
 
 on:
   workflow_dispatch:
@@ -6,11 +6,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout source
+      - name: Checkout Source Code
         uses: actions/checkout@v3
 
-      - name: Install Dependencies
+      - name: Set Up Dependencies
         run: |
           sudo apt update
           sudo apt install -y build-essential clang flex bison g++ gawk \
@@ -25,20 +26,15 @@ jobs:
           ./scripts/feeds install -a
           cp $GITHUB_WORKSPACE/.config .config
 
-      - name: Build firmware
+      - name: Build Firmware
         run: |
           cd openwrt
           make defconfig
           make -j$(nproc) download
           make -j$(nproc)
 
-      - name: Upload result
-        run: |
-          mkdir -p $GITHUB_WORKSPACE/artifacts
-          cp -r openwrt/bin/targets/* $GITHUB_WORKSPACE/artifacts/
-      
-      - name: Upload artifact manually
-        uses: actions/upload-artifact@v2
+      - name: Upload Firmware Artifact
+        uses: actions/upload-artifact@v3.1.2
         with:
-          name: openwrt-image
-          path: artifacts
+          name: openwrt-firmware
+          path: openwrt/bin/targets/
