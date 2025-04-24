@@ -18,6 +18,11 @@ jobs:
             gcc-multilib g++-multilib gettext git libncurses-dev libssl-dev \
             python3-distutils rsync unzip zlib1g-dev file wget python3
 
+      - name: Fix python3-distutils
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-distutils
+
       - name: Clone OpenWrt
         run: |
           git clone https://github.com/openwrt/openwrt.git
@@ -34,7 +39,7 @@ jobs:
           make -j$(nproc)
 
       - name: Upload Firmware Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: openwrt-firmware
           path: openwrt/bin/targets/
