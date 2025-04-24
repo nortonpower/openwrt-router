@@ -10,7 +10,7 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v3
 
-      - name: Set up environment
+      - name: Install Dependencies
         run: |
           sudo apt update
           sudo apt install -y build-essential clang flex bison g++ gawk \
@@ -23,7 +23,7 @@ jobs:
           cd openwrt
           ./scripts/feeds update -a
           ./scripts/feeds install -a
-          cp ../.config .config || true
+          cp $GITHUB_WORKSPACE/.config .config
 
       - name: Build firmware
         run: |
@@ -32,8 +32,13 @@ jobs:
           make -j$(nproc) download
           make -j$(nproc)
 
-      - name: Upload firmware
-        uses: actions/upload-artifact@v2.3.1
+      - name: Upload result
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/artifacts
+          cp -r openwrt/bin/targets/* $GITHUB_WORKSPACE/artifacts/
+      
+      - name: Upload artifact manually
+        uses: actions/upload-artifact@v2
         with:
-          name: openwrt-firmware
-          path: openwrt/bin/targets/
+          name: openwrt-image
+          path: artifacts
