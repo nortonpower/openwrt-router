@@ -35,6 +35,9 @@ jobs:
           make download -j$(nproc) || true
           make -j$(nproc) || make -j1 V=s
 
+      - name: List output files
+        run: ls -lh openwrt/bin/targets/x86/64/ || echo "No firmware output found"
+
       - name: Upload firmware image
         uses: actions/upload-artifact@v3
         with:
